@@ -5,6 +5,7 @@ from sklearn.tree import DecisionTreeRegressor
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.tree import plot_tree
+from sklearn.ensemble import RandomForestRegressor
 
 
 def select_pred_feat() -> tuple[pd.DataFrame, pd.Series]:
@@ -71,6 +72,18 @@ def tree_figure_creator(model: DecisionTreeRegressor, x: pd.DataFrame):
     plt.show()
 
 
+def random_forest_creator(train_X: pd.DataFrame, val_X: pd.DataFrame, train_y: pd.Series, val_y: pd.Series):
+    """Creates a random forrest model"""
+
+    rf_model = RandomForestRegressor(random_state=1)
+
+    rf_model.fit(train_X, train_y)
+
+    rf_val_mae = mean_absolute_error(val_y, rf_model.predict(val_X))
+
+    print("Validation MAE for Random Forest Model: {}".format(rf_val_mae))
+
+
 if __name__ == "__main__":
     x, y = select_pred_feat()
     train_X, val_X, train_y, val_y = pred_feat_splitter(x, y)
@@ -78,4 +91,5 @@ if __name__ == "__main__":
     model_validator(model, val_X, val_y)
     optimal_tree_size = find_best_tree_size(train_X, val_X, train_y, val_y)
     final_model = model_creator(optimal_tree_size, x, y)
-    tree_figure_creator(final_model, x)
+    # tree_figure_creator(final_model, x)
+    random_forest_creator(train_X, val_X, train_y, val_y)
